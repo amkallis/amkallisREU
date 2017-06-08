@@ -1,0 +1,56 @@
+---
+title: "amkallis_PC Analysis"
+author: "Kallis"
+date: "June 8, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### PC Analysis on data from various countries on various facors
+
+```{r Setup, echo=FALSE}
+#importing data
+worldBank_allVars = read.table(file.choose(), header=T,sep=",")
+#preparting packages
+install.packages("corrplot")
+library(corrplot)
+```
+
+```{r Organization, echo=FALSE}
+row.names(worldBank_allVars) = worldBank_allVars$Country.Name
+worldBank_allVars = worldBank_allVars[,-c(1,2)]
+#removing NumTourists due to many blanks
+worldBank_no_NumTourists = worldBank_allVars[,-26]
+#removing all rows which still contain missing data
+worldBank_no_NA = na.omit(worldBank_no_NumTourists)
+```
+
+```{r MakingLargePCs, echo=FALSE, fig.width=10, fig.height=10}
+WorldBank_no_NA_large_PCA = princomp(worldBank_no_NA,cor=TRUE)
+biplot(WorldBank_no_NA_large_PCA,cex=.8)
+```
+
+```{r Eigen,echo=FALSE}
+WorldBank_correlationMatrix = cor(worldBank_no_NA)
+WorldBank_Eigen = eigen(WorldBank_correlationMatrix)
+WorldBank_Eigen$values
+```
+
+
+```{r LimitingVariablesEigen, echo=FALSE}
+worldBank_smallSet = worldBank_no_NA[,c(47,48,8,9,11,12,38,41,50)]
+WorldBank_correlationMatrix_smallSet = cor(worldBank_smallSet)
+WorldBank_Eigen_smallSet = eigen(WorldBank_correlationMatrix_smallSet)
+WorldBank_Eigen_smallSet$values
+```
+
+```{r,echo=FALSE,fig.width=10,fig.height=10}
+WorldBank_smallSet_PCA =princomp(worldBank_smallSet,cor=TRUE)
+biplot(WorldBank_smallSet_PCA,cex=.8)
+```
+
