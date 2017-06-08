@@ -30,26 +30,26 @@ worldBank_no_NumTourists = worldBank_allVars[,-26]
 worldBank_no_NA = na.omit(worldBank_no_NumTourists)
 ```
 
-```{r MakingLargePCs, echo=FALSE, fig.width=10, fig.height=10}
+```{r MakingLargePCs, echo=TRUE, fig.width=10, fig.height=10}
 WorldBank_no_NA_large_PCA = princomp(worldBank_no_NA,cor=TRUE)
 biplot(WorldBank_no_NA_large_PCA,cex=.8)
 ```
 
-```{r Eigen,echo=FALSE}
+```{r Eigen,echo=TRUE}
 WorldBank_correlationMatrix = cor(worldBank_no_NA)
 WorldBank_Eigen = eigen(WorldBank_correlationMatrix)
 WorldBank_Eigen$values
 ```
 
 
-```{r LimitingVariablesEigen, echo=FALSE}
+```{r LimitingVariablesEigen, echo=TRUE}
 worldBank_smallSet = worldBank_no_NA[,c(47,48,8,9,11,12,38,41,50)]
 WorldBank_correlationMatrix_smallSet = cor(worldBank_smallSet)
 WorldBank_Eigen_smallSet = eigen(WorldBank_correlationMatrix_smallSet)
 WorldBank_Eigen_smallSet$values
 ```
 
-```{r,echo=FALSE,fig.width=10,fig.height=10}
+```{r,echo=TRUE,fig.width=10,fig.height=10}
 WorldBank_smallSet_PCA =princomp(worldBank_smallSet,cor=TRUE)
 biplot(WorldBank_smallSet_PCA,cex=.8)
 ```
