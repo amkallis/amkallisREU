@@ -1,0 +1,72 @@
+---
+title: "Cluster Task"
+author: "Kallis"
+date: "June 12, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Using the world bank data
+Pick a theme or subset (don't do all 51)
+Do a cluster analysis
+Try to make sense of your clusters
+
+```{r}
+myWorldBank = WorldBank
+row.names(myWorldBank) = myWorldBank$Country.Name
+
+myWorldBank.varsIWant = myWorldBank[,c(13,14,16,17,25,26,28,33,35,36,44,49)]
+myWorldBank.varsIWant.noNA = na.omit(myWorldBank.varsIWant)
+myWorldBank.varsIWant.scaled = scale(myWorldBank.varsIWant.noNA)
+
+myWorldBank.varsIWant.scaled.dist = dist(myWorldBank.varsIWant.scaled,method="euclidean")
+```
+
+```{r}
+library(MASS)
+load("C:/Users/kl8528ok/_AdriannaKallis/Materials/Unsupervised_Learning/mult.Rdata")
+
+```
+
+
+
+```{r}
+mysample <- myWorldBank.varsIWant[sample(1:nrow(myWorldBank.varsIWant), 50, replace=FALSE),]
+mysample.scaled = scale(mysample)
+mysample.scaled.dist = dist(mysample.scaled, method="euclidean")
+```
+
+
+
+```{r,fig.height=15,fig.width=15}
+#showing that the ward method is much better
+wealth.clust.wards = hclust(myWorldBank.varsIWant.scaled.dist, method="ward.D") #plug in the distance matrix, the method you would like to use,
+plot(wealth.clust.wards)
+
+```
+
+
+```{r,fig.height=15,fig.width=15}
+#showing that the ward method is much better
+wealth.clust.wards.fewer = hclust(mysample.scaled.dist, method="ward.D") #plug in the distance matrix, the method you would like to use,
+plot(wealth.clust.wards.fewer)
+
+```
+
+
+
+```{r}
+country.grps = cutree(wealth.clust.wards,k=6)#which cluster tree, how many groups you want
+country.grps.fewer = cutree(wealth.clust.wards.fewer,k=6)#which cluster tree, how many groups you want
+
+```
+
+
+```{r,fig.width=10,fig.height=10}
+#myWorldBank.varsIWant.unscaled = myWorldBank[,c(13,14,16,17,25,26,28,33,35,36,44,49)]
+clust.grps(mysample,country.grps.fewer)
+```

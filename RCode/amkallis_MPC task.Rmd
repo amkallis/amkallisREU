@@ -1,0 +1,62 @@
+---
+title: "MPC task"
+author: "Kallis"
+date: "June 10, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+myData = read.table(file.choose(), header = T, sep = ",")
+
+#Changing unknown values to NAs
+myData[,4:8][myData[,4:8]==0]<- NA
+myData[,11:12][myData[,11:12]==0] <- NA
+myData[,8][myData[,8]==9] <- NA
+
+#changing 2's to 0's for simplicity
+myData[,4:8][myData[,4:8]==2] <- 0
+myData[,11:12][myData[,11:12]==2] <- 0
+
+
+#ommiting missing data
+myData = na.omit(myData)
+
+
+
+#making variables factors
+myData$COUNTRY = factor(myData$COUNTRY)
+myData$YEAR = factor(myData$YEAR)
+myData$OWNERSHIP = factor(myData$OWNERSHIP)
+myData$ELECTRIC = factor(myData$ELECTRIC)
+myData$WATSUP = factor(myData$WATSUP)
+myData$SEWAGE = factor(myData$SEWAGE)
+myData$PHONE = factor(myData$PHONE)
+myData$ROOMS = factor(myData$ROOMS)
+myData$BEDROOMS = factor(myData$BEDROOMS)
+myData$TOILET = factor(myData$TOILET)
+myData$FLOOR = factor(myData$FLOOR)
+```
+
+
+
+
+```{r,fig.height=10,fig.width=10}
+#limiting the data to the variables I want to use
+limitedToOnesIWant = myData[,c(4,5,6,7,8,11,12)]
+
+
+#creating MCA plots based on variables I limited to
+limitedToOnesIWant.MCA = MCA(limitedToOnesIWant)
+
+#The first plot shows the overall index, explaining roughly 45% of the variation using just 2 dimentions
+
+#The second plot shows that there aren't any outliers, but it's more oval than circular
+
+#The third plot shows the emphasis on ownership
+```
+
+

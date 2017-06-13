@@ -1,0 +1,123 @@
+---
+title: "Chicago Homes"
+author: "Kallis"
+date: "June 13, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+ChiTrain = read.table(file.choose(),header=T,sep=",")
+ChiTest = read.table(file.choose(),header=T,sep=",")
+names(ChiTrain)
+head(ChiTrain)
+str(ChiTrain)
+```
+
+```{r}
+#taking log of response (ListPrice)
+ChiTrain$ListPrice = log(ChiTrain$ListPrice)
+ChiTest$ListPrice = log(ChiTest$ListPrice)
+
+
+#Making everything ordinal that should be
+ChiTrain$ZIP = ordered(ChiTrain$ZIP)
+#ChiTrain$BEDS = ordered(ChiTrain$BEDS)
+#ChiTrain$BATHS = ordered(ChiTrain$BATHS)
+#ChiTrain$ParkSpots = ordered(ChiTrain$ParkSpots)
+
+ChiTest$ZIP = ordered(ChiTest$ZIP)
+#ChiTest$BEDS = ordered(ChiTest$BEDS)
+#ChiTest$BATHS = ordered(ChiTest$BATHS)
+#ChiTest$ParkSpots = ordered(ChiTest$ParkSpots)
+```
+
+
+
+```{r}
+lm1 = lm(ListPrice~.,data=ChiTrain)
+summary(lm1)
+plot(lm1)
+#Adjusted R2 0.7938
+
+lm2 = lm(ListPrice~(1/log(ImputedSQFT)+ImputedSQFT),data=ChiTrain)
+summary(lm2)
+plot(lm2)
+#Adjusted R2 0.4782
+
+
+lm3 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT,data=ChiTrain)
+summary(lm3)
+plot(lm3)
+#Adjusted R2 0.6544
+
+
+lm4 = lm(ListPrice~poly(ImputedSQFT,3),data=ChiTrain)
+summary(lm4)
+plot(lm4)
+#Adjusted R2 0.64
+
+
+lm5 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + log(ImputedSQFT)*Type + log(ImputedSQFT)*City,data=ChiTrain)
+summary(lm5)
+plot(lm5)
+#Adjusted R2 0.8066
+
+
+lm6 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + Type*City + log(ImputedSQFT)*BEDS + log(ImputedSQFT)*BATHS,data=ChiTrain)
+summary(lm6)
+plot(lm6)
+#Adjusted R2 0.8121
+
+
+lm7 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + Type*City + log(ImputedSQFT)*BEDS + HasGarage+BeenReduced*DOM,data=ChiTrain)
+summary(lm7)
+plot(lm7)
+#Adjusted R2 0.8103
+
+
+lm8 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + Type+City + log(ImputedSQFT)*BEDS + HasGarage+BeenReduced*DOM,data=ChiTrain)
+summary(lm8)
+plot(lm8)
+#Adjusted R2 0.8017
+
+lm9 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + Type+City + log(ImputedSQFT)*BEDS +log(ImputedSQFT)*BATHS+ HasGarage+BeenReduced*DOM,data=ChiTrain)
+summary(lm9)
+plot(lm9)
+#Adjusted R2 0.8153
+
+
+lm10 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + Type+City + log(ImputedSQFT)*BEDS +log(ImputedSQFT)*BATHS+ HasGarage+BeenReduced,data=ChiTrain)
+summary(lm10)
+plot(lm10)
+#Adjusted R2 0.8142
+
+
+lm11 = lm(ListPrice~log(ImputedSQFT)+ImputedSQFT + Type+City + log(ImputedSQFT)*BEDS +log(ImputedSQFT)*BATHS+ HasGarage+BeenReduced*DOM+ParkSpots,data=ChiTrain)
+summary(lm11)
+plot(lm11)
+#Adjusted R2 0.8174
+
+
+
+```
+
+
+```{r}
+ypredlog = predict(lm9,newdata=ChiTest)
+ypred=exp(ypredlog)
+
+yactual=exp(ChiTest$ListPrice)
+plot(yactual,ypred)
+
+```
+
+
+
+```{r}
+PredAcc(yactual,ypred)
+```
+
